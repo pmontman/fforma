@@ -27,10 +27,14 @@ More information about metalearning for forecasting, read/cite the paper:
 
   * [FFORMA: Feature-based Forecast Model Averaging (To appear in International Journal of Forecasting)](https://robjhyndman.com/publications/fforma/)
 
+This package came out of the FFORMA method presented to the M4 forecasting competition,
+but has been improved and no longer can be used for reproducing results. 
+For exact reproducibilty of results, check [the M4metalearning github repo](https://github.com/robjhyndman/M4metalearning). For empirical performance, the fforma package, not M4metalearning, should be used.
 
-##installation
-```{r}
-
+##Installation
+```{r eval=FALSE}
+#install.packages("devtools")
+devtools::install_github("pmontman/fforma")
 ```
 
 
@@ -77,7 +81,8 @@ fforma_forec$dataset[[1]]$ff_meta_avg
 Forecasting with FFORMA can take a bit of time depending of the individual models that are going to be combined for forecasting and the size of the dataset.
 Parallelism through the `future` package is provided and the processing can be periodically saved to disk and resumed in the case of failure (like power outage, or an impending Windows update).
 
-The user just needs to select the `future::plan` and then paralellism is handled transparently.
+The user just needs to select the `future::plan` and then paralellism is handled transparently. More info about future plans/capabilities (here)[https://github.com/HenrikBengtsson/future].
+
 ```{r eval=FALSE}
 #the user enables, in this case, basic multicore parallelism through several processes
 future::plan(future::multiprocess)
@@ -93,7 +98,7 @@ the functions will try to resume the processing from the state saved in the fold
 launch `train_metalearning` or `test_metalearning` with a specific `save_foldername`, and if the process is interrupted, we launch them again with the same `save_foldername` vale an process will resume.
 
 An important additional parameter to use with `chunk_size`, which indicates how many time series are processed between savings. If we set `chunk_size=1000`, the traing/forecast process will stop to save progress each 1000 series.
-Too large value for `chunk_size` will run risk of losing a lot of progress, too small will waste a lot of time saving to disk. An automatic guess of `chunk_size` is provided if `chunk_size=NULL`, but it is highly recommended that the users sets it manually to their needs.
+Too large value for `chunk_size` will run risk of losing a lot of progress, too small will waste a lot of time saving to disk. An automatic guess of `chunk_size` is provided if `chunk_size=NULL`, but it is highly recommended that the users set it manually to their needs.
 
 Saving can be combined with parallelism.
 
