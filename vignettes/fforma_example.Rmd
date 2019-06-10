@@ -41,7 +41,7 @@ You may install it manually from:
 devtools::install_github("pmontman/customxgboost")
 ```
 Please note this if you use the latest version of the real xgboost package, *it will be overwritten.* We will patch
-this problom/workaround as soon as posssible.
+this problem/workaround as soon as posssible.
 
 Then the package can then be installed:
 
@@ -59,7 +59,7 @@ Basically, each element in this list has *at least* the component `$x` with a ti
 
 ###Training FFORMA
 
-The `train_metalearning` function will look for the component `$h` in the elements of the input list, where `$h` represents the desired prediction horizon. If not found, it will consider `h` to one seasonal period of the series. Then it substracts `h` observations from the time series `$x` and set them as true future values in the element `$xx`.
+The `train_metalearning` function will look for the component `$h` in the elements of the input list, where `$h` represents the desired prediction horizon. If not found, it will consider `h` to one seasonal period of the series. Then it substracts `h` observations from the time series `$x` and sets them as true future values in the component `$xx`.
 Then the metalearning model is trained (takes a bit of time, see Paralellism). The output of the `train_metalearning` is the metalearning model, the training dataset (after the temporal crossvalidation) and the information about the training process. This output of the training process can be used to forecast with the `forecast_metalearning` function.
 
 In the example, we will use a dataset of time series from the Mcomp package as training set, which already follows the required format (a list with elements having the `$x`. Additionally the `$h` is provided).
@@ -72,7 +72,7 @@ ts_dataset <- Mcomp::M3[sample(length(Mcomp::M3), 30)]
 fforma_fit <- train_metalearning(ts_dataset)
 ```
 ###Forecasting with FFORMA
-The `forecast_ metalearning` takes a metaleaning model (the output of `train_metalearning` or equivalent) and a dataset of time series we want to forecast. This dataset is a list in the same format, though now the `$h` component if necessary. The dataset for forecasting can be the same as the one used for training (since it uses crossvalidation by temporal holdout for training).
+The `forecast_ metalearning` takes a metaleaning model (the output of `train_metalearning` or equivalent) and a dataset of time series we want to forecast. This dataset is a list in the same format, though now the `$h` component if necessary, not optional. The dataset for forecasting can be the same as the one used for training (since it uses crossvalidation by temporal holdout for training).
 
 ```{r}
 fforma_forec <- forecast_metalearning(fforma_fit, ts_dataset)
