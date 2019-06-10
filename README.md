@@ -16,6 +16,17 @@ This package came out of the FFORMA method presented to the M4 forecasting compe
 Installation
 ------------
 
+Temporarily, as a workaround, a custom version of the `xgboost` package is required. You may install it manually from:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("pmontman/customxgboost")
+```
+
+Please note this if you use the latest version of the real xgboost package, *it will be overwritten.* We will patch this problom/workaround as soon as posssible.
+
+Then the package can then be installed:
+
 ``` r
 #install.packages("devtools")
 devtools::install_github("pmontman/fforma")
