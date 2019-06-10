@@ -32,6 +32,19 @@ but has been improved and no longer can be used for reproducing results.
 For exact reproducibilty of results, check [the M4metalearning github repo](https://github.com/robjhyndman/M4metalearning). For empirical performance, the fforma package, not M4metalearning, should be used.
 
 ##Installation
+
+Temporarily, as a workaround, a custom version of the `xgboost` package is required. 
+You may install it manually from:
+
+```{r , eval = FALSE}
+# install.packages("devtools")
+devtools::install_github("pmontman/customxgboost")
+```
+Please note this if you use the latest version of the real xgboost package, *it will be overwritten.* We will patch
+this problom/workaround as soon as posssible.
+
+Then the package can then be installed:
+
 ```{r eval=FALSE}
 #install.packages("devtools")
 devtools::install_github("pmontman/fforma")

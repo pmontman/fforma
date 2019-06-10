@@ -55,8 +55,7 @@ process_naive2_avg_errors <- function(dataset) {
 process_owa_errors <- function(dataset) {
   stopifnot("xx" %in% names(dataset[[1]]))
   stopifnot("x" %in% names(dataset[[1]]))
-  stopifnot("mase_err" %in% names(dataset[[1]]))
-  stopifnot("smape_err" %in% names(dataset[[1]]))
+
 
   avg_naive2_errors <- attr(dataset, "avg_naive2_errors")
   if (is.null(avg_naive2_errors)) {
