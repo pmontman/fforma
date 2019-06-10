@@ -1,0 +1,25 @@
+Package: fforma
+Title: Feature-based Forecast Method Averaging
+Version: 0.0.1
+Authors@R: c(
+  person("Pablo", "Montero-Manso", email="pmontm@gmail.com", role=c("aut", "cre"))
+  )
+Description: Tools for time series forecasting using model combination and model selection.
+Depends: R (>= 3.2.0)
+Imports: forecast,
+         parallel,
+         Mcomp,
+         tibble,
+         tsfeatures,
+         rBayesianOptimization,
+         future,
+         future.apply,
+         memoise,
+         devtools
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.1
+Suggests: knitr,
+    rmarkdown
+VignetteBuilder: knitr
