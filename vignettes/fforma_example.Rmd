@@ -16,10 +16,10 @@ knitr::opts_chunk$set(
 )
 ```
 
-#FFORMA: Feature-based Forecast Model Averaging
+# FFORMA: Feature-based Forecast Model Averaging
 
 
-##Introduction & Citation Info 
+## Introduction & Citation Info 
 
 The fforma package provides tools for forecasting using a model combination approach. It can be used for model averaging or model selection. It works by training a 'classifier' that learns to select/combine different forecast models.
 
@@ -31,7 +31,7 @@ This package came out of the FFORMA method presented to the M4 forecasting compe
 but has been improved and no longer can be used for reproducing results. 
 For exact reproducibilty of results, check [the M4metalearning github repo](https://github.com/robjhyndman/M4metalearning). For empirical performance, the fforma package, not M4metalearning, should be used.
 
-##Installation
+## Installation
 
 Temporarily, as a workaround, a custom version of the `xgboost` package is required. 
 You may install it manually from:
@@ -51,13 +51,13 @@ devtools::install_github("pmontman/fforma")
 ```
 
 
-##Usage
+## Usage
 
 The package can be used easily with two main functions: `train_metalearning` and `forecast_metalearning`.
 Both functions work on a `list` of elements with a particular data structure: A time series and some meta-data.
 Basically, each element in this list has *at least* the component `$x` with a time series as a `ts` object, which is the series we want to forecast.
 
-###Training FFORMA
+### Training FFORMA
 
 The `train_metalearning` function will look for the component `$h` in the elements of the input list, where `$h` represents the desired prediction horizon. If not found, it will consider `h` to one seasonal period of the series. Then it substracts `h` observations from the time series `$x` and sets them as true future values in the component `$xx`. This process is named temporal holdout.  If the series in the training set have the `$xx` component, FFORMA will use it instead of removing the last `h` observations of each series.
 
@@ -73,7 +73,8 @@ ts_dataset <- Mcomp::M3[sample(length(Mcomp::M3), 30)]
 #train!
 fforma_fit <- train_metalearning(ts_dataset)
 ```
-###Forecasting with FFORMA
+### Forecasting with FFORMA
+
 The `forecast_ metalearning` takes a metaleaning model (the output of `train_metalearning` or equivalent) and a dataset of time series we want to forecast. This dataset is a list in the same format, though now the `$h` component if necessary, not optional. The dataset for forecasting can be the same as the one used for training (since it uses crossvalidation by temporal holdout for training).
 
 ```{r}
@@ -90,7 +91,7 @@ If the dataset we forecast has the `$xx` component in its elements, fforma will 
 fforma_forec$dataset[[1]]$ff_meta_avg
 ```
 
-###Advanced: Customizing the base forecast models
+### Advanced: Customizing the base forecast models
 FFORMA learns to combine individual forecast models. By default it uses a set of forecasting models implemented in the forecast R package, such as `auto.arima`, `ets`, `thetaf`, etc. The set of methods that FFORMA learns to combine is passed in the `forec_methods` argument to the `train_metalearning` function.
 This argument should be a list of strings. Each string is the list shoudl coincide with the name of an existing forecasting function. This forecasting function is a simple function with two arguments: a ts object and the number of forecast horizons. When forecasting, FFORMA assumes that the custom functions used for training are available in the environment.
 To illustrate this process, we will fully customize fforma to learn to combine two forecast models of our own design, one forecasting the mean of the series and the other outputting zeroes.
@@ -117,7 +118,7 @@ custom_fforma_forec$owa_errors
 
 ```
 
-###Parallelism and Save/Restore progress
+### Parallelism and Save/Restore progress
 
 Forecasting with FFORMA can take a bit of time depending of the individual models that are going to be combined for forecasting and the size of the dataset.
 Parallelism through the `future` package is provided and the processing can be periodically saved to disk and resumed in the case of failure (like power outage, or an impending Windows update).
@@ -158,11 +159,11 @@ fforma_fit <- train_metalearning(ts_dataset, chunk_size = 10, save_foldername = 
 fforma_fit <- train_metalearning(ts_dataset, chunk_size = 10, save_foldername = "my_tmp_fforma")
 ```
 
-###Forecast methods
+### Forecast methods
 The users can select which basic forecast methods are combined through fforma.
 The default is based on the fforma submission to the M4 competition [(see the reference)](https://robjhyndman.com/publications/fforma/)
 
-###Combination by Model Averaging or Model Selection
+### Combination by Model Averaging or Model Selection
 The training can be fine-tuned towards either model selection or model averaging by 
 setting the `objective` parameter in `train_metalearning` too either `"averaging"` (default) or `"selection"`.
 
@@ -170,6 +171,6 @@ setting the `objective` parameter in `train_metalearning` too either `"averaging
 fforma_fit <- train_metalearning(ts_dataset, objective = "selection")
 ```
 
-###Advanced use
+### Advanced use
 The package provides functions for manually tuning the training/forecasting processes.
  TO BE COMPLETED

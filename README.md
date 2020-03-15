@@ -1,7 +1,7 @@
 
-\#FFORMA: Feature-based Forecast Model Averaging
+# FFORMA: Feature-based Forecast Model Averaging
 
-\#\#Introduction & Citation Info
+## Introduction & Citation Info
 
 The fforma package provides tools for forecasting using a model
 combination approach. It can be used for model averaging or model
@@ -22,7 +22,7 @@ M4metalearning github
 repo](https://github.com/robjhyndman/M4metalearning). For empirical
 performance, the fforma package, not M4metalearning, should be used.
 
-\#\#Installation
+## Installation
 
 Temporarily, as a workaround, a custom version of the `xgboost` package
 is required. You may install it manually from:
@@ -43,7 +43,7 @@ Then the package can then be installed:
 devtools::install_github("pmontman/fforma")
 ```
 
-\#\#Usage
+## Usage
 
 The package can be used easily with two main functions:
 `train_metalearning` and `forecast_metalearning`. Both functions work on
@@ -52,7 +52,7 @@ some meta-data. Basically, each element in this list has *at least* the
 component `$x` with a time series as a `ts` object, which is the series
 we want to forecast.
 
-\#\#\#Training FFORMA
+### Training FFORMA
 
 The `train_metalearning` function will look for the component `$h` in
 the elements of the input list, where `$h` represents the desired
@@ -81,31 +81,19 @@ library(fforma)
 ts_dataset <- Mcomp::M3[sample(length(Mcomp::M3), 30)]
 #train!
 fforma_fit <- train_metalearning(ts_dataset)
-#> Warning in gzfile(file, "rb"): cannot open compressed file
-#> 'meta_bayes_hypersearch.rds', probable reason 'No such file or directory'
-#> Error in gzfile(file, "rb") : cannot open the connection
-#> 
-#>  Best Parameters Found: 
-#> Round = 7    max_depth = 39.0000 eta = 0.3619    gamma = 0.2686  min_child_weight = 0.3152   subsample = 0.6126  colsample_bytree = 0.9224   nrounds = 255.0000  Value = -0.3555
 ```
 
-\#\#\#Forecasting with FFORMA The `forecast_ metalearning` takes a
-metaleaning model (the output of `train_metalearning` or equivalent) and
-a dataset of time series we want to forecast. This dataset is a list in
-the same format, though now the `$h` component if necessary, not
-optional. The dataset for forecasting can be the same as the one used
-for training (since it uses crossvalidation by temporal holdout for
-training).
+### Forecasting with FFORMA
+
+The `forecast_ metalearning` takes a metaleaning model (the output of
+`train_metalearning` or equivalent) and a dataset of time series we want
+to forecast. This dataset is a list in the same format, though now the
+`$h` component if necessary, not optional. The dataset for forecasting
+can be the same as the one used for training (since it uses
+crossvalidation by temporal holdout for training).
 
 ``` r
 fforma_forec <- forecast_metalearning(fforma_fit, ts_dataset)
-#> [1] "Classification error:  0.7667"
-#> [1] "Selected OWA :  0.6626"
-#> [1] "Weighted OWA :  0.6598"
-#> [1] "Naive Weighted OWA :  0.8009"
-#> [1] "Oracle OWA:  0.4536"
-#> [1] "Single method OWA:  0.663"
-#> [1] "Average OWA:  0.976"
 ```
 
 Thats’ it, two lines of code\! If the dataset we forecast has the `$xx`
@@ -120,14 +108,13 @@ each element of the list.
 ``` r
 #get the forecasts of the first series
 fforma_forec$dataset[[1]]$ff_meta_avg
-#>          [,1]     [,2]     [,3]     [,4]     [,5]     [,6]     [,7]     [,8]
-#> [1,] 5933.405 5975.721 6017.985 6060.058 6102.065 6143.706 6185.306 6226.695
 ```
 
-\#\#\#Advanced: Customizing the base forecast models FFORMA learns to
-combine individual forecast models. By default it uses a set of
-forecasting models implemented in the forecast R package, such as
-`auto.arima`, `ets`, `thetaf`, etc. The set of methods that FFORMA
+### Advanced: Customizing the base forecast models
+
+FFORMA learns to combine individual forecast models. By default it uses
+a set of forecasting models implemented in the forecast R package, such
+as `auto.arima`, `ets`, `thetaf`, etc. The set of methods that FFORMA
 learns to combine is passed in the `forec_methods` argument to the
 `train_metalearning` function. This argument should be a list of
 strings. Each string is the list shoudl coincide with the name of an
@@ -154,33 +141,13 @@ list_of_methods <- list("my_mean_forec", "my_zero_forec")
 
 #call fforma with the customized forecast functions
 custom_fforma_fit <- train_metalearning(ts_dataset, forec_methods=list_of_methods)
-#> Warning in gzfile(file, "rb"): cannot open compressed file
-#> 'meta_bayes_hypersearch.rds', probable reason 'No such file or directory'
-#> Error in gzfile(file, "rb") : cannot open the connection
-#> 
-#>  Best Parameters Found: 
-#> Round = 9    max_depth = 48.0000 eta = 0.4746    gamma = 1.5726  min_child_weight = 0.9224   subsample = 0.7719  colsample_bytree = 0.9680   nrounds = 413.0000  Value = -3.2358
 #the actual forecasting from the customized fforma
 custom_fforma_forec <- forecast_metalearning(custom_fforma_fit, ts_dataset)
-#> [1] "Classification error:  0"
-#> [1] "Selected OWA :  3.201"
-#> [1] "Weighted OWA :  3.2045"
-#> [1] "Naive Weighted OWA :  6.8355"
-#> [1] "Oracle OWA:  3.201"
-#> [1] "Single method OWA:  3.201"
-#> [1] "Average OWA:  9.16"
 #errors should be quite hight
 custom_fforma_forec$owa_errors
-#> $selected_error
-#> selected_ff 
-#>    3.200973 
-#> 
-#> $weighted_error
-#>          
-#> 3.204465
 ```
 
-\#\#\#Parallelism and Save/Restore progress
+### Parallelism and Save/Restore progress
 
 Forecasting with FFORMA can take a bit of time depending of the
 individual models that are going to be combined for forecasting and the
@@ -240,25 +207,24 @@ fforma_fit <- train_metalearning(ts_dataset, chunk_size = 10, save_foldername = 
 fforma_fit <- train_metalearning(ts_dataset, chunk_size = 10, save_foldername = "my_tmp_fforma")
 ```
 
-\#\#\#Forecast methods The users can select which basic forecast methods
-are combined through fforma. The default is based on the fforma
-submission to the M4 competition [(see the
+### Forecast methods
+
+The users can select which basic forecast methods are combined through
+fforma. The default is based on the fforma submission to the M4
+competition [(see the
 reference)](https://robjhyndman.com/publications/fforma/)
 
-\#\#\#Combination by Model Averaging or Model Selection The training can
-be fine-tuned towards either model selection or model averaging by
-setting the `objective` parameter in `train_metalearning` too either
-`"averaging"` (default) or `"selection"`.
+### Combination by Model Averaging or Model Selection
+
+The training can be fine-tuned towards either model selection or model
+averaging by setting the `objective` parameter in `train_metalearning`
+too either `"averaging"` (default) or `"selection"`.
 
 ``` r
 fforma_fit <- train_metalearning(ts_dataset, objective = "selection")
-#> Warning in gzfile(file, "rb"): cannot open compressed file
-#> 'meta_bayes_hypersearch.rds', probable reason 'No such file or directory'
-#> Error in gzfile(file, "rb") : cannot open the connection
-#> 
-#>  Best Parameters Found: 
-#> Round = 1    max_depth = 7.0000  eta = 0.6474    gamma = 1.5787  min_child_weight = 3.4637   subsample = 0.6224  colsample_bytree = 0.7593   nrounds = 148.0000  Value = -0.3876
 ```
 
-\#\#\#Advanced use The package provides functions for manually tuning
-the training/forecasting processes. TO BE COMPLETED
+### Advanced use
+
+The package provides functions for manually tuning the
+training/forecasting processes. TO BE COMPLETED
