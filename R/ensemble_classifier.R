@@ -112,6 +112,24 @@ predict_selection_ensemble <- function(model, newdata) {
   pred
 }
 
+#' @export
+train_fforma = function(features, errors, params=NULL, nrounds=200) {
+
+  if (is.null(params)) {
+    params <- list()
+    params$eta = 0.03
+    params$max_depth = 14
+  }
+
+  train_selection_ensemble(features, errors, params, nrounds)
+
+}
+
+#' @export
+predict_fforma <- function(model, newdata) {
+  predict_selection_ensemble(model, newdata)
+}
+
 
 
 #on one hand we should have the model as first argument following the "predict" R convention

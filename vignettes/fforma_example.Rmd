@@ -59,8 +59,10 @@ Basically, each element in this list has *at least* the component `$x` with a ti
 
 ###Training FFORMA
 
-The `train_metalearning` function will look for the component `$h` in the elements of the input list, where `$h` represents the desired prediction horizon. If not found, it will consider `h` to one seasonal period of the series. Then it substracts `h` observations from the time series `$x` and sets them as true future values in the component `$xx`.
-Then the metalearning model is trained (takes a bit of time, see Paralellism). The output of the `train_metalearning` is the metalearning model, the training dataset (after the temporal crossvalidation) and the information about the training process. This output of the training process can be used to forecast with the `forecast_metalearning` function.
+The `train_metalearning` function will look for the component `$h` in the elements of the input list, where `$h` represents the desired prediction horizon. If not found, it will consider `h` to one seasonal period of the series. Then it substracts `h` observations from the time series `$x` and sets them as true future values in the component `$xx`. This process is named temporal holdout.  If the series in the training set have the `$xx` component, FFORMA will use it instead of removing the last `h` observations of each series.
+
+
+Then the metalearning model is trained (takes a bit of time, see Paralellism section below). The output of the `train_metalearning` are the components: the metalearning model, the training dataset (after the temporal holdout) and the information about the training process. This output of the training process can be used to forecast with the `forecast_metalearning` function.
 
 In the example, we will use a dataset of time series from the Mcomp package as training set, which already follows the required format (a list with elements having the `$x`. Additionally the `$h` is provided).
 ```{r}
@@ -88,13 +90,39 @@ If the dataset we forecast has the `$xx` component in its elements, fforma will 
 fforma_forec$dataset[[1]]$ff_meta_avg
 ```
 
+###Advanced: Customizing the base forecast models
+FFORMA learns to combine individual forecast models. By default it uses a set of forecasting models implemented in the forecast R package, such as `auto.arima`, `ets`, `thetaf`, etc. The set of methods that FFORMA learns to combine is passed in the `forec_methods` argument to the `train_metalearning` function.
+This argument should be a list of strings. Each string is the list shoudl coincide with the name of an existing forecasting function. This forecasting function is a simple function with two arguments: a ts object and the number of forecast horizons. When forecasting, FFORMA assumes that the custom functions used for training are available in the environment.
+To illustrate this process, we will fully customize fforma to learn to combine two forecast models of our own design, one forecasting the mean of the series and the other outputting zeroes.
+
+```{r}
+#a function that takes x, a ts() and h an integer with the desired forecast horizon
+my_mean_forec <- function(x, h) { 
+  rep(mean(x), h)
+}
+
+my_zero_forec <- function(x,h) {
+  rep(0, h)
+}
+
+#a list of strings, each the name of the forecasting function
+list_of_methods <- list("my_mean_forec", "my_zero_forec")
+
+#call fforma with the customized forecast functions
+custom_fforma_fit <- train_metalearning(ts_dataset, forec_methods=list_of_methods)
+#the actual forecasting from the customized fforma
+custom_fforma_forec <- forecast_metalearning(custom_fforma_fit, ts_dataset)
+#errors should be quite hight
+custom_fforma_forec$owa_errors
+
+```
 
 ###Parallelism and Save/Restore progress
 
 Forecasting with FFORMA can take a bit of time depending of the individual models that are going to be combined for forecasting and the size of the dataset.
 Parallelism through the `future` package is provided and the processing can be periodically saved to disk and resumed in the case of failure (like power outage, or an impending Windows update).
 
-The user just needs to select the `future::plan` and then paralellism is handled transparently. More info about future plans/capabilities (here)[https://github.com/HenrikBengtsson/future].
+The user just needs to select the `future::plan` and then paralellism is handled transparently. More info about future plans/capabilities [here](https://github.com/HenrikBengtsson/future).
 
 ```{r eval=FALSE}
 #the user enables, in this case, basic multicore parallelism through several processes

@@ -18,7 +18,7 @@ hyperparameter_search <- function(dataset, objective= c("averaging", "selection"
     stop("hyperparameter_search requires a file to store temp results, please set the save_filename parameter")
   }
 
-  #weird check to remove a save file already exisiting, when we are not resuming, to avoid continoing from it
+  #weird check to remove a save file already exisiting, when we are not resuming, to avoid continuing from it
   if (!is.null(save_filename)) {
     if (is.null(resume_filename) || (save_filename!=resume_filename)) {
       if (file.exists(save_filename)) {
